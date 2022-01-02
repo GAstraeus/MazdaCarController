@@ -30,15 +30,16 @@ This project requires python3 and rust
     gunicorn --bind 0.0.0.0:5000 app:app
     ```
    
-### Config File Setup
+### Config File Setup  
 Copy the config setup from below into a file config.ini   
 the api_key is the key required to be passed as a parameter with requests to the program  
 username and password are the login credentials to the MyMazda account  
---------
-[Default]  
-api_key =   
-username =   
-password =   
+```
+ [Default]  
+ api_key =   
+ username =   
+ password =
+```
 
 ### Useage 
 GET Requests to server
