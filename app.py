@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import Response
+import json
 import asyncio
 import pymazda
 import configContext
@@ -97,6 +98,33 @@ async def startEngine() -> None:
     await client.close()
     return Response(status=200)
 
+
+@app.route('/status', methods=['GET'])
+async def status() -> None:
+    key = request.args.get('key')
+    if key != cred.api_key:
+        return Response(status=403)
+
+    client = pymazda.Client(cred.username, cred.password, "MNAO")
+
+    vehicles = await client.get_vehicles()
+    await client.validate_credentials()
+
+    http_status = 200
+    car_status = {}
+
+    try:
+        for vehicle in vehicles:
+            vehicle_id = vehicle["id"]
+
+            car_status = await client.get_vehicle_status(vehicle_id)
+            print(car_status)
+
+    finally:
+        http_status = 501
+
+    await client.close()
+    return Response(status=200, response=json.dumps(car_status))
 
 if __name__ == '__main__':
     app.run()
