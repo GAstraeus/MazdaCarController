@@ -1,11 +1,11 @@
 # CarStarter
 
-This program is to handel web requests and process them into actions for a Mazda automobile.  
+This program can be used to manage and control your Mazda veichle. 
+It can connect to Apple Shortcuts app, Smart Speakers, and other programs using web requests to control and manage data avout your Mazda veichle.
+Currently you are able to lock, unlock, start the engine, and get status information on your veichle
 
-For Blog Post See: https://www.georgeaboudiwan.ga/projects/automated-engine-starter  
+## For Blog Post and example useage see: https://www.georgeaboudiwan.ga/projects/automated-engine-starter  
  
-
-The program is capable of locking and unlocking an automobile as well as starting the vehicle
 
 ### Project Setup
 This project requires python3 and rust 
@@ -42,7 +42,10 @@ username and password are the login credentials to the MyMazda account
 ```
 
 ### Useage 
+To use the api you must send a get request to the running server
+The get request takes a parameter of key which is the api key you set in your config file. 
+
 GET Requests to server
-* /unlock?key=<>
-* /lock?key=<>
-* /startEngine?key=<>
+* example_api.com/unlock?key=<>
+* example_api.com/lock?key=<>
+* example_api.com/startEngine?key=<>
