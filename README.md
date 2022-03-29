@@ -25,7 +25,7 @@ This project requires python3 and rust
     pip install -r requirements.txt
     ```
 
-1. Install packages from requirements.txt
+1. Run program using gunicorn
     ```shell script
     gunicorn --bind 0.0.0.0:5000 app:app
     ```
