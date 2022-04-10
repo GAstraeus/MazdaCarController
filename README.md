@@ -41,8 +41,20 @@ username and password are the login credentials to the MyMazda account
  password =
 ```
 
-### Useage 
+## Dockerfile Setup
+To build and use this program in a docker container change the path on line 3 of the Dockerfile to be the path of this program
+Build the container by running the command:
+```bash
+docker build -t car-starter  .
+```
+Run the container using the command
+```bash
+docker run -d -p 5000:5000 car-starter
+```
+
+### API Useage 
 GET Requests to server
 * /unlock?key=<>
 * /lock?key=<>
 * /startEngine?key=<>
+* /status?key=<>
