@@ -4,15 +4,18 @@ from flask import Response
 import json
 import pymazda
 import configContext
+import logging
 
 app = Flask(__name__)
 credentials = configContext.Config()
-
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%m-%y %H:%M:%S')
 
 @app.route('/unlock', methods=['GET'])
 async def unlock() -> None:
+    logging.info("Running Unlock")
     key = request.args.get('key')
     if key != credentials.api_key:
+        logging.error("Authentication Failure Key:{}".format(key))
         return Response(status=403)
 
     client = pymazda.Client(credentials.username, credentials.password, "MNAO")
@@ -26,11 +29,11 @@ async def unlock() -> None:
             vehicle_id = vehicle["id"]
 
             status = await client.get_vehicle_status(vehicle_id)
-            print(status)
 
             res = await client.unlock_doors(vehicle_id)
-            print(res)
-    finally:
+            logging.info("Unlocked Doors")
+    except Exception as e:
+        logging.error("Error Connecting to Mazda: {}".format(e))
         http_status = 501
 
     await client.close()
@@ -39,8 +42,10 @@ async def unlock() -> None:
 
 @app.route('/lock', methods=['GET'])
 async def lock() -> None:
+    logging.info("Running Lock")
     key = request.args.get('key')
     if key != credentials.api_key:
+        logging.error("Authentication Failure Key:{}".format(key))
         return Response(status=403)
 
     client = pymazda.Client(credentials.username, credentials.password, "MNAO")
@@ -55,11 +60,11 @@ async def lock() -> None:
             vehicle_id = vehicle["id"]
 
             status = await client.get_vehicle_status(vehicle_id)
-            print(status)
 
             res = await client.lock_doors(vehicle_id)
-            print(res)
-    finally:
+            logging.info("Locked Doors")
+    except Exception as e:
+        logging.error("Error Connecting to Mazda: {}".format(e))
         http_status = 501
 
     await client.close()
@@ -68,12 +73,13 @@ async def lock() -> None:
 
 @app.route('/startEngine', methods=['GET'])
 async def startEngine() -> None:
+    logging.info("Running Start Engine")
     key = request.args.get('key')
     if key != credentials.api_key:
+        logging.error("Authentication Failure Key:{}".format(key))
         return Response(status=403)
 
     client = pymazda.Client(credentials.username, credentials.password, "MNAO")
-
 
     vehicles = await client.get_vehicles()
     await client.validate_credentials()
@@ -85,11 +91,11 @@ async def startEngine() -> None:
             vehicle_id = vehicle["id"]
 
             status = await client.get_vehicle_status(vehicle_id)
-            print(status)
-
             await client.start_engine(vehicle_id)
 
-    finally:
+            logging.info("Started Engine")
+    except Exception as e:
+        logging.error("Error Connecting to Mazda: {}".format(e))
         http_status = 501
 
     await client.close()
@@ -98,8 +104,10 @@ async def startEngine() -> None:
 
 @app.route('/status', methods=['GET'])
 async def status() -> None:
+    logging.info("Running Status")
     key = request.args.get('key')
     if key != credentials.api_key:
+        logging.error("Authentication Failure Key:{}".format(key))
         return Response(status=403)
 
     client = pymazda.Client(credentials.username, credentials.password, "MNAO")
@@ -115,9 +123,10 @@ async def status() -> None:
             vehicle_id = vehicle["id"]
 
             car_status = await client.get_vehicle_status(vehicle_id)
-            print(car_status)
 
-    finally:
+            logging.info("Got Status: {}".format(json.dumps(car_status)))
+    except Exception as e:
+        logging.error("Error Connecting to Mazda: {}".format(e))
         http_status = 501
 
     await client.close()
@@ -125,8 +134,10 @@ async def status() -> None:
 
 @app.route('/checkCar', methods=['GET'])
 async def checkCar() -> None:
+    logging.info("Running Check Car")
     key = request.args.get('key')
     if key != credentials.api_key:
+        logging.error("Authentication Failure Key:{}".format(key))
         return Response(status=403)
 
     client = pymazda.Client(credentials.username, credentials.password, "MNAO")
@@ -142,9 +153,10 @@ async def checkCar() -> None:
             vehicle_id = vehicle["id"]
 
             car_status = await client.get_vehicle_status(vehicle_id)
-            print(car_status)
             await client.close()
-    finally:
+            logging.info("Got Status: {}".format(json.dumps(car_status)))
+    except Exception as e:
+        logging.error("Error Connecting to Mazda: {}".format(e))
         http_status = 501
         return Response(status=http_status, response=json.dumps(car_status))
 
@@ -164,6 +176,9 @@ async def checkCar() -> None:
         if window_status == True:
             response["windows_open"] = True
 
+    logging.info("Car Check Found: {}".format(response))
     return Response(status=http_status, response=json.dumps(response))
+
+
 if __name__ == '__main__':
     app.run()
